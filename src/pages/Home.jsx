@@ -8,7 +8,7 @@ import {
   formatPrice 
 } from '../services/api';
 
-// CORREÇÃO CRÍTICA DO CAMINHO: O arquivo Home.jsx está em 'pages/'.
+// CORREÇÃO CRÍTICA DO CAMINHO: O arquivo está em 'pages/'. 
 // '..' sobe da pasta 'pages' para 'src', onde encontra 'styles/global.css'.
 import '../styles/global.css'; 
 
@@ -32,13 +32,13 @@ const Home = () => {
       }
     };
     loadData();
-  }, []); // [] garante que o fetch roda apenas uma vez (ao montar o componente)
+  }, []); // [] garante que o fetch roda apenas uma vez
 
   // Renderização condicional para estados de UI
   if (loading) return <div className="loading">Carregando ofertas...</div>;
   if (error) return <div className="error">{error}</div>;
 
-  // Proteção com Optional Chaining caso a API retorne algo inesperado
+  // Proteção com Optional Chaining (?.): Se a propriedade não existir, retorna array vazio
   const banners = data?.banners || [];
   const collections = data?.collection_items || [];
 
@@ -66,8 +66,7 @@ const Home = () => {
           
           <div className="product-grid">
             {collection.items.map((product) => (
-              // LINK CORRETO: Navega para a rota de detalhes usando /p/ 
-              // (deve corresponder ao /p/:slug configurado no App.jsx)
+              // LINK CORRETO: Usa /p/ para corresponder à rota /p/:slug configurada no App.jsx
               <Link 
                 to={`/p/${product.slug}`} 
                 key={product.id} 

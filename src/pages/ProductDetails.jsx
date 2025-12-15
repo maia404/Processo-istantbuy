@@ -1,67 +1,97 @@
-// pages/ProductDetails.jsx
 import React, { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, Link } from 'react-router-dom';
 import { fetchProductDetails, getProductImageUrl, formatPrice } from '../services/api';
+// IMPORTANTE: Importa o hook customizado para acessar o carrinho
+import { useCart } from '../context/CartContext'; 
+
+// Caminho de importação correto para o CSS Global
 import '../styles/global.css'; 
 
 const ProductDetails = () => {
-  const { slug } = useParams();
+  const { slug } = useParams(); // Obtém o parâmetro 'slug' da URL (/p/:slug)
   const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  // CHAVE: Obtém a função 'addItem' do CartContext
+  const { addItem } = useCart(); 
 
   useEffect(() => {
-    const loadProduct = async () => {
-      setLoading(true);
-      try {
-        const data = await fetchProductDetails(slug);
-        // A API pode retornar um array ou objeto direto dependendo da versão, 
-        // aqui assumimos que data[0] é o item se for array.
-        setProduct(Array.isArray(data) ? data[0] : data);
-      } catch (error) {
-        console.error(error);
-      } finally {
+    // 1. Verifica se há slug para buscar
+    if (!slug) {
         setLoading(false);
+        setError("Nenhum produto especificado.");
+        return;
+    }
+    
+    // 2. Inicia a busca na API
+    setLoading(true);
+    fetchProductDetails(slug)
+      .then(setProduct)
+      .catch((err) => {
+        console.error("Erro ao buscar detalhes:", err);
+        setError("Erro ao carregar o produto ou item não encontrado.");
+      })
+      .finally(() => setLoading(false));
+  }, [slug]); // Dependência: Roda a busca quando o slug muda
+
+  // 3. Função de manipulação do botão (usa a função do contexto)
+  const handleAddToCart = () => {
+      if (product) {
+          addItem(product); // Adiciona o produto ao estado global do carrinho
       }
-    };
-    loadProduct();
-  }, [slug]);
+  };
 
-  if (loading) return <div className="loading">Carregando produto...</div>;
-  if (!product) return <div>Produto não encontrado.</div>;
+  // --- Renderização Condicional ---
+  if (loading) return <div className="loading">Carregando detalhes...</div>;
+  if (error) return <div className="error">{error}</div>;
+  
+  // Produto não encontrado (404)
+  if (!product) return 
+    <div className="container">
+        <p className="error">Produto não encontrado ou indisponível.</p>
+        <Link to="/" className="back-link">← Voltar para a loja</Link>
+    </div>;
 
-  // Seleciona a imagem principal (geralmente a primeira)
-  const mainImage = product.images && product.images.length > 0 ? product.images[0] : null;
+  // Extrai dados com proteção de Optional Chaining
+  const mainImage = product.images?.[0];
+  const price = product.prices?.[0]?.price;
 
   return (
-    <div className="details-container">
-      <div className="details-grid">
-        {/* Coluna da Imagem */}
-        <div className="image-column">
+    <div className="container fade-in">
+      <Link to="/" className="back-link">← Voltar para a loja</Link>
+      
+      <div className="details-wrapper">
+        <div className="details-image">
           {mainImage && (
             <img 
-              src={getProductImageUrl(mainImage, 'big')} 
+              src={getProductImageUrl(mainImage, 'large')} 
               alt={product.name} 
-              className="main-image"
             />
           )}
         </div>
 
-        {/* Coluna de Informações */}
-        <div className="info-column">
+        <div className="details-info">
           <h1>{product.name}</h1>
-          <div className="price-tag">
-            {formatPrice(product.prices[0].price)}
-          </div>
+          <span className="details-brand">Marca: {product.brand || 'Geral'}</span>
           
-          <p className="description">
-            {product.description || "Sem descrição disponível."}
+          <div className="details-price">
+            {price ? formatPrice(price) : "Preço indisponível"}
+          </div>
+
+          <p className="details-description">
+            {product.description || "Sem descrição detalhada para este produto."}
           </p>
 
           <button 
-            className="btn-add-cart"
-            onClick={() => alert(`Adicionado: ${product.name}`)}
+            className="btn-buy"
+            // CHAVE: Chama a função que adiciona o item via Context
+            onClick={handleAddToCart}
+            // Desabilita se o preço não estiver disponível
+            disabled={!price} 
           >
-            Adicionar ao carrinho
+            {/* Texto dinâmico opcional */}
+            {price ? "Adicionar ao Carrinho" : "Indisponível para Compra"}
           </button>
         </div>
       </div>
