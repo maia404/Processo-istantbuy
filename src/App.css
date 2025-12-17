@@ -1,0 +1,82 @@
+/* Definições para o container principal da aplicação no index.html */
+#root {
+  /* Define a largura máxima do conteúdo. Impede que o conteúdo se espalhe
+     demais em telas muito grandes, mantendo a legibilidade. */
+  max-width: 1280px; 
+  
+  /* Centraliza o container #root horizontalmente na página. */
+  margin: 0 auto; 
+  
+  /* Adiciona espaçamento interno (acima, abaixo e nas laterais). */
+  padding: 2rem; 
+  
+  /* Centraliza todo o conteúdo interno do #root (texto, imagens, etc.). */
+  text-align: center; 
+}
+
+/* Estilos específicos para a classe .logo (usada no logo do React/Vite) */
+.logo {
+  /* Define a altura do logo. */
+  height: 6em; 
+  
+  /* Adiciona espaçamento interno ao redor do logo. */
+  padding: 1.5em; 
+  
+  /* Propriedade para otimização de performance:
+     informa ao navegador que a propriedade 'filter' será alterada. */
+  will-change: filter; 
+  
+  /* Define a duração da transição do efeito hover (sombra). */
+  transition: filter 300ms; 
+}
+
+/* Efeito ao passar o mouse sobre o logo */
+.logo:hover {
+  /* Aplica uma sombra (drop-shadow) ao logo para criar um efeito de brilho/destaque.
+     A cor #646cffaa é um tom de azul/roxo semitransparente. */
+  filter: drop-shadow(0 0 2em #646cffaa); 
+}
+
+/* Estilo específico para o logo do React (quando a classe 'react' também está presente) */
+.logo.react:hover {
+  /* Sobrescreve a sombra padrão com a cor verde-água do React. */
+  filter: drop-shadow(0 0 2em #61dafbaa); 
+}
+
+/* --- Definição da Animação --- */
+
+/* Cria o quadro-chave (keyframes) da animação de giro do logo */
+@keyframes logo-spin {
+  from {
+    /* Estado inicial: 0 graus de rotação */
+    transform: rotate(0deg); 
+  }
+  to {
+    /* Estado final: 360 graus de rotação (uma volta completa) */
+    transform: rotate(360deg); 
+  }
+}
+
+/* --- Aplicação da Animação --- */
+
+/* Media query que aplica a animação apenas se o usuário NÃO tiver
+   preferência por redução de movimento no sistema operacional. */
+@media (prefers-reduced-motion: no-preference) {
+  /* Aplica a animação no segundo elemento 'a' que contém o logo (geralmente o logo do React) */
+  a:nth-of-type(2) .logo {
+    /* Define a animação: 'logo-spin' (nome), 'infinite' (loop), '20s' (duração), 'linear' (velocidade constante). */
+    animation: logo-spin infinite 20s linear; 
+  }
+}
+
+/* Estilos para o bloco de contagem/botão inicial */
+.card {
+  /* Adiciona espaçamento interno ao redor do conteúdo do cartão. */
+  padding: 2em; 
+}
+
+/* Estilos para o texto de documentação */
+.read-the-docs {
+  /* Define uma cor cinza mais escura para o texto. */
+  color: #888; 
+}
