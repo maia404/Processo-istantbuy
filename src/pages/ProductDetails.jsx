@@ -1,30 +1,27 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { fetchProductDetails, getProductImageUrl, formatPrice } from '../services/api';
-// IMPORTANTE: Importa o hook customizado para acessar o carrinho
 import { useCart } from '../context/CartContext'; 
-
-// Caminho de importação correto para o CSS Global
 import '../styles/global.css'; 
 
 const ProductDetails = () => {
-  const { slug } = useParams(); // Obtém o parâmetro 'slug' da URL (/p/:slug)
+  const { slug } = useParams(); 
   const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // CHAVE: Obtém a função 'addItem' do CartContext
+  //Obtém a função 'addItem' do CartContext
   const { addItem } = useCart(); 
 
   useEffect(() => {
-    // 1. Verifica se há slug para buscar
+    //Verifica se há slug para buscar
     if (!slug) {
         setLoading(false);
         setError("Nenhum produto especificado.");
         return;
     }
     
-    // 2. Inicia a busca na API
+    //Inicia a busca na API
     setLoading(true);
     fetchProductDetails(slug)
       .then(setProduct)
@@ -35,14 +32,13 @@ const ProductDetails = () => {
       .finally(() => setLoading(false));
   }, [slug]); // Dependência: Roda a busca quando o slug muda
 
-  // 3. Função de manipulação do botão (usa a função do contexto)
+  //Função de manipulação do botão (usa a função do contexto)
   const handleAddToCart = () => {
       if (product) {
           addItem(product); // Adiciona o produto ao estado global do carrinho
       }
   };
 
-  // --- Renderização Condicional ---
   if (loading) return <div className="loading">Carregando detalhes...</div>;
   if (error) return <div className="error">{error}</div>;
   
@@ -85,7 +81,7 @@ const ProductDetails = () => {
 
           <button 
             className="btn-buy"
-            // CHAVE: Chama a função que adiciona o item via Context
+            //Chama a função que adiciona o item via Context
             onClick={handleAddToCart}
             // Desabilita se o preço não estiver disponível
             disabled={!price} 

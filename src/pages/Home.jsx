@@ -7,10 +7,8 @@ import {
   getProductImageUrl, 
   formatPrice 
 } from '../services/api';
-
-// CORREÇÃO CRÍTICA DO CAMINHO: O arquivo está em 'pages/'. 
-// '..' sobe da pasta 'pages' para 'src', onde encontra 'styles/global.css'.
 import '../styles/global.css'; 
+
 
 const Home = () => {
   // Estados para gerenciar dados, carregamento e erros
@@ -32,13 +30,11 @@ const Home = () => {
       }
     };
     loadData();
-  }, []); // [] garante que o fetch roda apenas uma vez
+  }, []);
 
-  // Renderização condicional para estados de UI
   if (loading) return <div className="loading">Carregando ofertas...</div>;
   if (error) return <div className="error">{error}</div>;
 
-  // Proteção com Optional Chaining (?.): Se a propriedade não existir, retorna array vazio
   const banners = data?.banners || [];
   const collections = data?.collection_items || [];
 
@@ -66,7 +62,6 @@ const Home = () => {
           
           <div className="product-grid">
             {collection.items.map((product) => (
-              // LINK CORRETO: Usa /p/ para corresponder à rota /p/:slug configurada no App.jsx
               <Link 
                 to={`/p/${product.slug}`} 
                 key={product.id} 

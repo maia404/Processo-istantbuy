@@ -1,4 +1,3 @@
-// src/main.jsx
 // Este é o primeiro arquivo React que roda.
 import React from 'react';
 import ReactDOM from 'react-dom/client';

@@ -1,22 +1,18 @@
-// src/App.jsx
 import React from 'react';
-import { BrowserRouter, Routes, Route, Link } from 'react-router-dom';
+import { HashRouterRouter, Routes, Route, Link } from 'react-router-dom';
 import Home from './pages/Home';
 import ProductDetails from './pages/ProductDetails';
 import Cart from './pages/Cart'; 
-// Importe o Provedor e o Hook
 import { CartProvider, useCart } from './context/CartContext'; 
 
 import './styles/global.css'; 
 
-// Componente HeaderContent: Precisa ser uma função válida que retorna JSX.
 const HeaderContent = () => {
-    // 1. Lógica do Carrinho
+    // Lógica do Carrinho
     const { cartItems } = useCart();
     const totalItems = cartItems.reduce((acc, item) => acc + item.quantity, 0);
 
-    // 2. Retorno do Componente
-    return ( // <-- O 'return' está DENTRO desta função.
+    return ( 
         <div className="header-content">
             <Link to="/" className="logo-link">
                 <span className="logo"> Mercadon</span>

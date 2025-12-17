@@ -1,4 +1,3 @@
-// src/pages/Cart.jsx
 import React from 'react';
 import { useCart } from '../context/CartContext';
 import { formatPrice, getProductImageUrl } from '../services/api';
@@ -7,7 +6,7 @@ import { Link } from 'react-router-dom';
 import '../styles/global.css'; 
 
 const Cart = () => {
-  // 1. Obtém as funções do contexto
+  //Obtém as funções do contexto
   const { cartItems, incrementQuantity, decrementQuantity, removeItem } = useCart();
 
   // Cálculo do Total
