@@ -48,4 +48,5 @@ Bash
 npm run dev
 Acessar: O projeto estará acessível no seu navegador no endereço que o terminal indicar
 
-
+Link para o site
+https://maia404.github.io/Processo-istantbuy/
