@@ -51,7 +51,7 @@ const Cart = () => {
                   </p>
                 </div>
                 
-                {/* AÇÕES: CONTROLE DE QUANTIDADE + BOTÃO REMOVER */}
+                {/*CONTROLE DE QUANTIDADE + BOTÃO REMOVER */}
                 <div className="cart-actions">
                     
                     {/* Controle de Quantidade */}

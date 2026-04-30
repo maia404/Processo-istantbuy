@@ -9,49 +9,55 @@ const ProductDetails = () => {
   const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [added, setAdded] = useState(false); // controla o estado do botão
 
-  //Obtém a função 'addItem' do CartContext
-  const { addItem } = useCart(); 
+  const { addItem, cartItems } = useCart(); 
 
   useEffect(() => {
-    //Verifica se há slug para buscar
     if (!slug) {
-        setLoading(false);
-        setError("Nenhum produto especificado.");
-        return;
+      setLoading(false);
+      setError("Nenhum produto especificado.");
+      return;
     }
-    
-    //Inicia a busca na API
+
     setLoading(true);
     fetchProductDetails(slug)
-      .then(setProduct)
+      .then((data) => {
+        setProduct(data);
+      })
       .catch((err) => {
         console.error("Erro ao buscar detalhes:", err);
         setError("Erro ao carregar o produto ou item não encontrado.");
       })
       .finally(() => setLoading(false));
-  }, [slug]); // Dependência: Roda a busca quando o slug muda
+  }, [slug]);
 
-  //Função de manipulação do botão (usa a função do contexto)
+  // Sincroniza o estado do botão com o carrinho ao carregar a página
+  useEffect(() => {
+    if (product) {
+      const isInCart = cartItems.some(item => item.id === product.id);
+      setAdded(isInCart);
+    }
+  }, [product, cartItems]);
+
   const handleAddToCart = () => {
-      if (product) {
-          addItem(product); // Adiciona o produto ao estado global do carrinho
-      }
+    if (product && !added) {
+      addItem(product);
+      setAdded(true);
+    }
   };
 
   if (loading) return <div className="loading">Carregando detalhes...</div>;
-  if (error) return <div className="error">{error}</div>;
-  
-  // Produto não encontrado (404)
-  if (!product) return 
+  if (error)   return <div className="error">{error}</div>;
+  if (!product) return (
     <div className="container">
-        <p className="error">Produto não encontrado ou indisponível.</p>
-        <Link to="/" className="back-link">← Voltar para a loja</Link>
-    </div>;
+      <p className="error">Produto não encontrado ou indisponível.</p>
+      <Link to="/" className="back-link">← Voltar para a loja</Link>
+    </div>
+  );
 
-  // Extrai dados com proteção de Optional Chaining
   const mainImage = product.images?.[0];
-  const price = product.prices?.[0]?.price;
+  const price     = product.prices?.[0]?.price;
 
   return (
     <div className="container fade-in">
@@ -79,15 +85,14 @@ const ProductDetails = () => {
             {product.description || "Sem descrição detalhada para este produto."}
           </p>
 
-          <button 
-            className="btn-buy"
-            //Chama a função que adiciona o item via Context
+          <button
+            className={`btn-buy ${added ? 'btn-buy--added' : ''}`}
             onClick={handleAddToCart}
-            // Desabilita se o preço não estiver disponível
-            disabled={!price} 
+            disabled={!price || added}
           >
-            {/* Texto dinâmico opcional */}
-            {price ? "Adicionar ao Carrinho" : "Indisponível para Compra"}
+            {!price && "Indisponível para Compra"}
+            {price && !added && "🛒 Adicionar ao Carrinho"}
+            {price && added  && "✔ Item no Carrinho"}
           </button>
         </div>
       </div>
