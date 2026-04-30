@@ -41,9 +41,7 @@ const ProductDetails = () => {
   // Adiciona N vezes conforme a quantidade escolhida
   const handleAddToCart = () => {
     if (product && !added) {
-      for (let i = 0; i < quantity; i++) {
-        addItem(product);
-      }
+      addItem(product, quantity);
       setAdded(true);
     }
   };
@@ -54,9 +52,18 @@ const ProductDetails = () => {
   if (loading)  return <div className="loading">Carregando detalhes...</div>;
   if (error)    return <div className="error">{error}</div>;
   if (!product) return (
-    <div className="container">
-      <p className="error">Produto não encontrado ou indisponível.</p>
-      <Link to="/" className="back-link">← Voltar para a loja</Link>
+    <div className="not-found-page fade-in">
+      <div className="not-found-box">
+        <span className="not-found-emoji">🔍</span>
+        <h2 className="not-found-title">Produto não encontrado</h2>
+        <p className="not-found-text">
+          Este produto pode estar indisponível ou ter sido removido pelo fornecedor da API.
+          Tente outro item da nossa loja!
+        </p>
+        <Link to="/" className="not-found-btn">
+          ← Voltar para a loja
+        </Link>
+      </div>
     </div>
   );
 

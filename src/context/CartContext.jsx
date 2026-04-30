@@ -51,8 +51,8 @@ export const CartProvider = ({ children }) => {
     }, 3000);
   }, []);
 
-  // Adiciona um novo item ou incrementa um existente (+1)
-  const addItem = (product) => {
+  // Adiciona um novo item ou incrementa um existente (suporta qty > 1)
+  const addItem = (product, qty = 1) => {
     if (!product || !product.id) {
       console.error("Tentativa de adicionar produto sem ID válido.");
       return;
@@ -63,14 +63,15 @@ export const CartProvider = ({ children }) => {
       if (existingItem) {
         return prevItems.map(item =>
           item.id === product.id
-            ? { ...item, quantity: item.quantity + 1 }
+            ? { ...item, quantity: item.quantity + qty }
             : item
         );
       } else {
-        return [...prevItems, { ...product, quantity: 1 }];
+        return [...prevItems, { ...product, quantity: qty }];
       }
     });
 
+    // Um único toast independente da quantidade
     fireToast(product.name, 'add');
   };
 
