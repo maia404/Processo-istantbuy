@@ -798,3 +798,81 @@ body {
 .btn-buy--added:hover {
   background-color: #27ae60;
 }
+
+/* ================= SELETOR DE QUANTIDADE (DETALHES) ================= */
+
+/* Linha que agrupa o seletor + botão */
+.buy-row {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: nowrap;
+  width: 100%;
+}
+
+.buy-row .btn-buy {
+  flex: 1;
+  min-width: 0;
+  white-space: nowrap;
+}
+
+/* Seletor de quantidade */
+.qty-selector {
+  display: flex;
+  align-items: center;
+  border: 2px solid var(--primary);
+  border-radius: 10px;
+  overflow: hidden;
+  height: 52px;
+  flex-shrink: 0;
+}
+
+.qty-selector__btn {
+  width: 44px;
+  height: 100%;
+  background: none;
+  border: none;
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: var(--primary);
+  cursor: pointer;
+  transition: background 0.15s;
+  line-height: 1;
+}
+
+.qty-selector__btn:hover:not(:disabled) {
+  background: #fff0eb;
+}
+
+.qty-selector__btn:disabled {
+  color: #ccc;
+  cursor: default;
+}
+
+.qty-selector__value {
+  min-width: 44px;
+  text-align: center;
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--text);
+  border-left: 1px solid #eee;
+  border-right: 1px solid #eee;
+  padding: 0 6px;
+}
+
+@media (max-width: 600px) {
+  .buy-row {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .buy-row .btn-buy {
+    min-width: unset;
+    width: 100%;
+  }
+
+  .qty-selector {
+    width: 100%;
+    justify-content: center;
+  }
+}

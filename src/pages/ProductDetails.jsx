@@ -6,10 +6,11 @@ import '../styles/global.css';
 
 const ProductDetails = () => {
   const { slug } = useParams(); 
-  const [product, setProduct] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-  const [added, setAdded] = useState(false); // controla o estado do botão
+  const [product, setProduct]   = useState(null);
+  const [loading, setLoading]   = useState(true);
+  const [error, setError]       = useState(null);
+  const [quantity, setQuantity] = useState(1);  // quantidade selecionada
+  const [added, setAdded]       = useState(false);
 
   const { addItem, cartItems } = useCart(); 
 
@@ -19,12 +20,9 @@ const ProductDetails = () => {
       setError("Nenhum produto especificado.");
       return;
     }
-
     setLoading(true);
     fetchProductDetails(slug)
-      .then((data) => {
-        setProduct(data);
-      })
+      .then(setProduct)
       .catch((err) => {
         console.error("Erro ao buscar detalhes:", err);
         setError("Erro ao carregar o produto ou item não encontrado.");
@@ -32,7 +30,7 @@ const ProductDetails = () => {
       .finally(() => setLoading(false));
   }, [slug]);
 
-  // Sincroniza o estado do botão com o carrinho ao carregar a página
+  // Sincroniza botão com o carrinho
   useEffect(() => {
     if (product) {
       const isInCart = cartItems.some(item => item.id === product.id);
@@ -40,15 +38,21 @@ const ProductDetails = () => {
     }
   }, [product, cartItems]);
 
+  // Adiciona N vezes conforme a quantidade escolhida
   const handleAddToCart = () => {
     if (product && !added) {
-      addItem(product);
+      for (let i = 0; i < quantity; i++) {
+        addItem(product);
+      }
       setAdded(true);
     }
   };
 
-  if (loading) return <div className="loading">Carregando detalhes...</div>;
-  if (error)   return <div className="error">{error}</div>;
+  const handleDecrement = () => setQuantity(q => Math.max(1, q - 1));
+  const handleIncrement = () => setQuantity(q => Math.min(99, q + 1));
+
+  if (loading)  return <div className="loading">Carregando detalhes...</div>;
+  if (error)    return <div className="error">{error}</div>;
   if (!product) return (
     <div className="container">
       <p className="error">Produto não encontrado ou indisponível.</p>
@@ -85,15 +89,50 @@ const ProductDetails = () => {
             {product.description || "Sem descrição detalhada para este produto."}
           </p>
 
-          <button
-            className={`btn-buy ${added ? 'btn-buy--added' : ''}`}
-            onClick={handleAddToCart}
-            disabled={!price || added}
-          >
-            {!price && "Indisponível para Compra"}
-            {price && !added && "🛒 Adicionar ao Carrinho"}
-            {price && added  && "✔ Item no Carrinho"}
-          </button>
+          {/* Seletor de quantidade + botão — só aparece se houver preço e não foi adicionado */}
+          {price && !added && (
+            <div className="buy-row">
+              <div className="qty-selector">
+                <button
+                  className="qty-selector__btn"
+                  onClick={handleDecrement}
+                  disabled={quantity <= 1}
+                  aria-label="Diminuir quantidade"
+                >
+                  −
+                </button>
+                <span className="qty-selector__value">{quantity}</span>
+                <button
+                  className="qty-selector__btn"
+                  onClick={handleIncrement}
+                  disabled={quantity >= 99}
+                  aria-label="Aumentar quantidade"
+                >
+                  +
+                </button>
+              </div>
+
+              <button className="btn-buy" onClick={handleAddToCart}>
+                🛒 Adicionar ao Carrinho
+              </button>
+            </div>
+          )}
+
+          {/* Estado: já adicionado */}
+          {price && added && (
+            <div className="buy-row">
+              <button className="btn-buy btn-buy--added" disabled>
+                ✔ Item no Carrinho
+              </button>
+            </div>
+          )}
+
+          {/* Estado: sem preço */}
+          {!price && (
+            <button className="btn-buy" disabled>
+              Indisponível para Compra
+            </button>
+          )}
         </div>
       </div>
     </div>
